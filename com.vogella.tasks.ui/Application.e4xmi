@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_JxqPAJKiEempu57BHgOLVg" elementId="com.vogella.tasks.ui.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_Nj3VUJKiEempu57BHgOLVg" elementId="com.vogella.tasks.ui.trimmedwindow.taskmanager" label="Task Manager" x="0" y="0" width="800" height="1024">
+    <children xsi:type="basic:PartSashContainer" xmi:id="_sNDPsJKjEempu57BHgOLVg" elementId="om.vogella.tasks.ui.partsashcontainer.main" horizontal="true">
+      <children xsi:type="basic:PartStack" xmi:id="_Fs-msJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.partstack.0">
+        <children xsi:type="basic:Part" xmi:id="_YVdkwJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.part.overview" label="Overview"/>
+      </children>
+      <children xsi:type="basic:PartSashContainer" xmi:id="_OxR4wJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.partsashcontainer.0">
+        <children xsi:type="basic:PartStack" xmi:id="_PvwTMJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.partstack.1">
+          <children xsi:type="basic:Part" xmi:id="_bZYowJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.part.details" label="Details"/>
+        </children>
+        <children xsi:type="basic:PartStack" xmi:id="_QJsdMJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.partstack.2">
+          <children xsi:type="basic:Part" xmi:id="_dGGpQJKkEempu57BHgOLVg" elementId="com.vogella.tasks.ui.part.playground" label="Playground"/>
+        </children>
+      </children>
+    </children>
+  </children>
+  <addons xmi:id="_JxqPAZKiEempu57BHgOLVg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_JxqPApKiEempu57BHgOLVg" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_JxqPA5KiEempu57BHgOLVg" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_JxqPBJKiEempu57BHgOLVg" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_JxqPBZKiEempu57BHgOLVg" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_JxqPBpKiEempu57BHgOLVg" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_JxqPB5KiEempu57BHgOLVg" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+</application:Application>

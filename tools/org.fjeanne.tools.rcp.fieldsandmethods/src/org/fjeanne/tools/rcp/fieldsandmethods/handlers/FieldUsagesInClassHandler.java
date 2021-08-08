@@ -1,5 +1,6 @@
 package org.fjeanne.tools.rcp.fieldsandmethods.handlers;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -30,34 +32,38 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 		List<Object> selectedItems = getSelectedItems(event);
 
-		StringBuilder result = new StringBuilder();
+		Stream<ITypeRoot> compilationUnits = selectedItems.parallelStream()//
+				.filter(ITypeRoot.class::isInstance)//
+				.map(ITypeRoot.class::cast);
 
-		for (Object item : selectedItems) {
-			if (item instanceof ITypeRoot) {
-
-				ITypeRoot compilationUnit = (ITypeRoot) item;
-
-				result.append(compilationUnit.getElementName())//
-						.append(System.lineSeparator());
-
-				Map<String, List<String>> findFieldUsagesInMethods = findFieldUsagesInMethods(compilationUnit);
-				result.append(toString(findFieldUsagesInMethods))//
-						.append(System.lineSeparator());
-
-			}
-		}
+		String result = findFieldUsagesInMethods(compilationUnits);
 
 		showResultIfNotEmpty(event, result);
 
 		return null;
 	}
 
-	private void showResultIfNotEmpty(ExecutionEvent event, StringBuilder result) throws ExecutionException {
-		if (result.length() == 0)
+	private String findFieldUsagesInMethods(Stream<ITypeRoot> compilationUnits) {
+		StringBuilder result = new StringBuilder();
+		
+		compilationUnits.forEach(compilationUnit -> {
+			result.append(compilationUnit.getElementName())//
+					.append(System.lineSeparator());
+
+			Map<String, List<String>> findFieldUsagesInMethods = findFieldUsagesInMethods(compilationUnit);
+			result.append(toString(findFieldUsagesInMethods))//
+					.append(System.lineSeparator());
+
+		});
+		return result.toString();
+	}
+
+	private void showResultIfNotEmpty(ExecutionEvent event, String report) throws ExecutionException {
+		if (report.isBlank())
 			return;
 
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		MessageDialog.openInformation(window.getShell(), "Field usage in methods", result.toString());
+		MessageDialog.openInformation(window.getShell(), "Field usage in methods", report.toString());
 	}
 
 	private String toString(Map<String, List<String>> fieldsToMethods) {

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -22,9 +23,16 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 
 	@Override
 	public boolean visit(VariableDeclarationFragment node) {
+		if (!isField(node))
+			return false;
+
 		System.out.println("Declared field: '" + node.getName() + "'");
 		_fieldsToMethods.put(node.getName().getFullyQualifiedName(), new ArrayList<>());
 		return false;
+	}
+
+	private boolean isField(VariableDeclarationFragment node) {
+		return node.getParent() instanceof FieldDeclaration;
 	}
 
 	@Override

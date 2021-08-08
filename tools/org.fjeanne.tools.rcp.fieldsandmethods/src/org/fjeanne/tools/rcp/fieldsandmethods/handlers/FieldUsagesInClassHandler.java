@@ -47,12 +47,15 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 			}
 		}
 
-		show(event, result);
+		showResultIfNotEmpty(event, result);
 
 		return null;
 	}
 
-	private void show(ExecutionEvent event, StringBuilder result) throws ExecutionException {
+	private void showResultIfNotEmpty(ExecutionEvent event, StringBuilder result) throws ExecutionException {
+		if (result.length() == 0)
+			return;
+
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		MessageDialog.openInformation(window.getShell(), "Field usage in methods", result.toString());
 	}

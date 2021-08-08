@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Fields and methods analyzer
+Bundle-SymbolicName: org.fjeanne.tools.rcp.fieldsandmethods;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: org.fjeanne
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.jdt.core,
+ org.eclipse.core.runtime
+Automatic-Module-Name: org.fjeanne.tools.rcp.fieldsandmethods
+Bundle-RequiredExecutionEnvironment: JavaSE-11

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.fjeanne.tools.rcp.fieldsandmethods.commands.tools"
+            name="Tools">
+      </category>
+      <command
+            categoryId="org.fjeanne.tools.rcp.fieldsandmethods.commands.tools"
+            name="Count fields and methods"
+            id="org.fjeanne.tools.rcp.fieldsandmethods.commands.fieldusages">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.fjeanne.tools.rcp.fieldsandmethods.handlers.FieldUsagesInClassHandler"
+            commandId="org.fjeanne.tools.rcp.fieldsandmethods.commands.fieldusages">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.fjeanne.tools.rcp.fieldsandmethods.commands.fieldusages"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="org.fjeanne.tools.rcp.fieldsandmethods.menus.sampleMenu"
+               label="Sample Menu"
+               mnemonic="M">
+            <command
+                  commandId="org.fjeanne.tools.rcp.fieldsandmethods.commands.sampleCommand"
+                  id="org.fjeanne.tools.rcp.fieldsandmethods.menus.sampleCommand"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+</plugin>

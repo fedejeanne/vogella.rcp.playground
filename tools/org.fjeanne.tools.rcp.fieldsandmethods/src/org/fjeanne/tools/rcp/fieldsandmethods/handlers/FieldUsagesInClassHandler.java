@@ -38,6 +38,7 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 		String result = findFieldUsagesInMethods(compilationUnits);
 
+		showWarningIfEmpty(event, result);
 		showResultIfNotEmpty(event, result);
 
 		return null;
@@ -45,7 +46,7 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 	private String findFieldUsagesInMethods(Stream<ITypeRoot> compilationUnits) {
 		StringBuilder result = new StringBuilder();
-		
+
 		compilationUnits.forEach(compilationUnit -> {
 			result.append(compilationUnit.getElementName())//
 					.append(System.lineSeparator());
@@ -56,6 +57,16 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 		});
 		return result.toString();
+	}
+
+	private void showWarningIfEmpty(ExecutionEvent event, String report) throws ExecutionException {
+		if (!report.isBlank())
+			return;
+
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		MessageDialog.openWarning(window.getShell(), "To be used only on Java files",
+				"This command only works on java files and not on packages, projects, etc.\n"//
+						+ "Please select a Java file in the package explorer and run the command again.");
 	}
 
 	private void showResultIfNotEmpty(ExecutionEvent event, String report) throws ExecutionException {

@@ -35,13 +35,11 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               id="org.fjeanne.tools.rcp.fieldsandmethods.menus.sampleMenu"
-               label="Sample Menu"
-               mnemonic="M">
+               id="org.fjeanne.tools.rcp.fieldsandmethods.menus.federico"
+               label="Federico">
             <command
-                  commandId="org.fjeanne.tools.rcp.fieldsandmethods.commands.sampleCommand"
-                  id="org.fjeanne.tools.rcp.fieldsandmethods.menus.sampleCommand"
-                  mnemonic="S">
+                  commandId="org.fjeanne.tools.rcp.fieldsandmethods.commands.fieldusages"
+                  id="org.fjeanne.tools.rcp.fieldsandmethods.menus.fieldusages">
             </command>
          </menu>
       </menuContribution>

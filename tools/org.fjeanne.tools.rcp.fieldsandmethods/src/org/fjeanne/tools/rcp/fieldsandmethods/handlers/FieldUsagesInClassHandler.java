@@ -39,7 +39,7 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 		List<Object> selectedItems = getSelectedItems(event);
 
-		Stream<ITypeRoot> compilationUnits = selectedItems.parallelStream()//
+		Stream<ITypeRoot> compilationUnits = selectedItems.stream()//
 				.filter(ITypeRoot.class::isInstance)//
 				.map(ITypeRoot.class::cast);
 

@@ -33,6 +33,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class FieldUsagesInClassHandler extends AbstractHandler {
 
+	public static final String PLUGIN_ID = "org.fjeanne.tools.rcp.fieldsandmethods";
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		toStringOfSelectedItems(event);
@@ -71,9 +73,9 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 		Set<String> methods = getAllMethodNamesOrdered(fieldToMethods);
 
-		String header = "field," + methods.stream().collect(Collectors.joining(","));
+		String header = "field," + methods.stream().collect(Collectors.joining(",")) + ",total";
 		sb.append(header);
-		sb.append("\n");
+		sb.append(System.lineSeparator());
 
 		for (String field : fieldToMethods.keySet()) {
 			sb.append(field);
@@ -89,7 +91,7 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 			long total = useCountInMethods.parallelStream().reduce(0L, Long::sum);
 			sb.append(total);
 
-			sb.append("\n");
+			sb.append(System.lineSeparator());
 		}
 
 		return sb.toString();
@@ -137,11 +139,11 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 		ErrorDialog.openError(window.getShell(), "Field usages in methods", "This is NOT an error", status);
 	}
 
-	private static MultiStatus createMultiStatus(String msg) {
-		Status status = new Status(IStatus.INFO, "abc.def", msg);
+	private static MultiStatus createMultiStatus(String details) {
+		Status status = new Status(IStatus.INFO, PLUGIN_ID, details);
 
 		String reason = "because I just created a CSV report of the field usages for you. Look under the 'Details'";
-		return new MultiStatus("tuv.wxy.z", IStatus.INFO, List.of(status).toArray(new Status[] {}), reason, null);
+		return new MultiStatus(PLUGIN_ID, IStatus.INFO, List.of(status).toArray(new Status[] {}), null, null);
 	}
 
 	private Map<String, List<String>> findFieldUsagesInMethods(ITypeRoot compilationUnit) {

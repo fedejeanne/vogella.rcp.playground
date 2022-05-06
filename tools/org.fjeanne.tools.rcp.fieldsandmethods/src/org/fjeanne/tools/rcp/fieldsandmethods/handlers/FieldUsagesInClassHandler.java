@@ -16,11 +16,15 @@ import java.util.stream.Stream;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,11 +59,8 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 					.append(System.lineSeparator());
 
 			Map<String, List<String>> findFieldUsagesInMethods = findFieldUsagesInMethods(compilationUnit);
-			result.append(toString(findFieldUsagesInMethods))//
+			result.append(toCsv(findFieldUsagesInMethods))//
 					.append(System.lineSeparator());
-
-			System.out.println("CSV");
-			System.out.println(toCsv(findFieldUsagesInMethods));
 
 		});
 		return result.toString();
@@ -131,30 +132,16 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 			return;
 
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		MessageDialog.openInformation(window.getShell(), "Field usage in methods", report.toString());
+
+		IStatus status = createMultiStatus(report);
+		ErrorDialog.openError(window.getShell(), "Field usages in methods", "This is NOT an error", status);
 	}
 
-	private String toString(Map<String, List<String>> fieldsToMethods) {
-		StringBuilder sb = new StringBuilder();
-		for (Entry<String, List<String>> fieldToMethods : fieldsToMethods.entrySet()) {
-			String fieldName = fieldToMethods.getKey();
-			List<String> methods = fieldToMethods.getValue();
+	private static MultiStatus createMultiStatus(String msg) {
+		Status status = new Status(IStatus.INFO, "abc.def", msg);
 
-			Collections.sort(methods);
-			String methodNames = methods.stream().collect(Collectors.joining(",", "[", "]"));
-
-			sb.append("'");
-			sb.append(fieldName);
-			sb.append("' is used ");
-			sb.append(methods.size());
-			sb.append(" times in these methods: ");
-			sb.append(methodNames);
-			sb.append(System.lineSeparator());
-			sb.append(System.lineSeparator());
-
-		}
-
-		return sb.toString();
+		String reason = "because I just created a CSV report of the field usages for you. Look under the 'Details'";
+		return new MultiStatus("tuv.wxy.z", IStatus.INFO, List.of(status).toArray(new Status[] {}), reason, null);
 	}
 
 	private Map<String, List<String>> findFieldUsagesInMethods(ITypeRoot compilationUnit) {

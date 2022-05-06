@@ -115,6 +115,7 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 	private Set<String> getAllMethodNamesOrdered(Map<String, List<String>> fieldToMethods) {
 		return fieldToMethods.values().parallelStream()//
 				.flatMap(Collection::stream)//
+				.filter(c -> c != null) //
 				.map(c -> c.toString()) //
 				.collect(Collectors.toCollection(TreeSet::new));
 	}

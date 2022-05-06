@@ -23,12 +23,16 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 
 	@Override
 	public boolean visit(VariableDeclarationFragment node) {
-		if (!isField(node))
-			return false;
+		String name = node.getName().getFullyQualifiedName();
 
-		System.out.println("Declared field: '" + node.getName() + "'");
-		_fieldsToMethods.put(node.getName().getFullyQualifiedName(), new ArrayList<>());
-		return false;
+		if (!isField(node)) {
+			System.out.println("'" + name + "' is not a field. SKIP");
+			return true;
+		}
+
+		System.out.println("Declared field: '" + name + "'");
+		_fieldsToMethods.put(name, new ArrayList<>());
+		return true;
 	}
 
 	private boolean isField(VariableDeclarationFragment node) {
@@ -43,13 +47,22 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 	}
 
 	@Override
+	public void endVisit(MethodDeclaration node) {
+		System.out.println("Leaving method: " + _currentMethod);
+		_currentMethod = null;
+	}
+
+	@Override
 	public boolean visit(SimpleName node) {
 		String name = node.getFullyQualifiedName();
+		System.out.print("Inspecting possible field: '" + name + "'");
 		if (_fieldsToMethods.containsKey(name)) {
 			System.out.println("Field '" + name + "' is used in method '" + _currentMethod + "'");
 			_fieldsToMethods.get(name).add(_currentMethod);
-		}
-		return false;
+		} else
+			System.out.println("... this isn't a field");
+
+		return true;
 	}
 
 }

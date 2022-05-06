@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class CountFieldUsagesInMethods extends ASTVisitor {
 
+	
 	private final Map<String, List<String>> _fieldsToMethods = new TreeMap<>();
 
 	private String _currentMethod;
@@ -26,11 +27,11 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 		String name = node.getName().getFullyQualifiedName();
 
 		if (!isField(node)) {
-			System.out.println("'" + name + "' is not a field. SKIP");
+			log("'" + name + "' is not a field. SKIP");
 			return true;
 		}
 
-		System.out.println("Declared field: '" + name + "'");
+		log("Declared field: '" + name + "'");
 		_fieldsToMethods.put(name, new ArrayList<>());
 		return true;
 	}
@@ -42,27 +43,32 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		_currentMethod = node.getName().getFullyQualifiedName();
-		System.out.println("Entering method: " + _currentMethod);
+		log("Entering method: " + _currentMethod);
 		return true;
 	}
 
 	@Override
 	public void endVisit(MethodDeclaration node) {
-		System.out.println("Leaving method: " + _currentMethod);
+		log("Leaving method: " + _currentMethod);
 		_currentMethod = null;
 	}
 
 	@Override
 	public boolean visit(SimpleName node) {
 		String name = node.getFullyQualifiedName();
-		System.out.print("Inspecting possible field: '" + name + "'");
+		log("Inspecting possible field: '" + name + "'");
 		if (_fieldsToMethods.containsKey(name)) {
-			System.out.println("Field '" + name + "' is used in method '" + _currentMethod + "'");
+			log("Field '" + name + "' is used in method '" + _currentMethod + "'");
 			_fieldsToMethods.get(name).add(_currentMethod);
 		} else
-			System.out.println("... this isn't a field");
+			log("... this isn't a field");
 
 		return true;
+	}
+
+	private void log(String message) {
+		//TODO use a proper logging mechanism
+		System.out.println(message);
 	}
 
 }

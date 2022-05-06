@@ -1,5 +1,6 @@
 package org.fjeanne.tools.rcp.fieldsandmethods.handlers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,8 +58,62 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 			result.append(toString(findFieldUsagesInMethods))//
 					.append(System.lineSeparator());
 
+			System.out.println("CSV");
+			System.out.println(toCsv(findFieldUsagesInMethods));
+
 		});
 		return result.toString();
+	}
+
+	private String toCsv(Map<String, List<String>> fieldToMethods) {
+		StringBuilder sb = new StringBuilder();
+
+		Set<String> methods = getAllMethodNamesOrdered(fieldToMethods);
+
+		String header = "field," + methods.stream().collect(Collectors.joining(","));
+		sb.append(header);
+		sb.append("\n");
+
+		for (String field : fieldToMethods.keySet()) {
+			sb.append(field);
+			sb.append(",");
+
+			List<String> usagesOfFieldInMethods = fieldToMethods.get(field);
+			List<Long> useCountInMethods = collectUseCountInMethods(usagesOfFieldInMethods, methods);
+
+			String useCountString = useCountInMethods.stream().map(String::valueOf).collect(Collectors.joining(","));
+			sb.append(useCountString);
+
+			sb.append(",");
+			long total = useCountInMethods.parallelStream().reduce(0L, Long::sum);
+			sb.append(total);
+
+			sb.append("\n");
+		}
+
+		return sb.toString();
+	}
+
+	private List<Long> collectUseCountInMethods(List<String> methodUsages, Set<String> allMethods) {
+		List<Long> useCountInMethods = new ArrayList<>();
+
+		for (String m : allMethods) {
+			long count = countOccurrencesInList(m, methodUsages);
+
+			useCountInMethods.add(count);
+		}
+		return useCountInMethods;
+	}
+
+	private long countOccurrencesInList(String s, List<String> list) {
+		return list.stream().filter(s::equals).count();
+	}
+
+	private Set<String> getAllMethodNamesOrdered(Map<String, List<String>> fieldToMethods) {
+		return fieldToMethods.values().parallelStream()//
+				.flatMap(Collection::stream)//
+				.map(c -> c.toString()) //
+				.collect(Collectors.toCollection(TreeSet::new));
 	}
 
 	private void showWarningIfEmpty(ExecutionEvent event, String report) throws ExecutionException {

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -62,14 +63,19 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 					.append(System.lineSeparator());
 
 			Map<String, List<String>> findFieldUsagesInMethods = findFieldUsagesInMethods(compilationUnit);
-			result.append(toCsv(findFieldUsagesInMethods))//
+
+			Optional<String> csvReport = toCsv(findFieldUsagesInMethods);
+			result.append(csvReport.orElse("No fields found"))//
 					.append(System.lineSeparator());
 
 		});
 		return result.toString();
 	}
 
-	private String toCsv(Map<String, List<String>> fieldToMethods) {
+	private Optional<String> toCsv(Map<String, List<String>> fieldToMethods) {
+		if (fieldToMethods.isEmpty())
+			return Optional.empty();
+
 		StringBuilder sb = new StringBuilder();
 
 		Set<String> methods = getAllMethodNamesOrdered(fieldToMethods);
@@ -95,7 +101,7 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 			sb.append(System.lineSeparator());
 		}
 
-		return sb.toString();
+		return Optional.of(sb.toString());
 	}
 
 	private List<Long> collectUseCountInMethods(List<String> methodUsages, Set<String> allMethods) {

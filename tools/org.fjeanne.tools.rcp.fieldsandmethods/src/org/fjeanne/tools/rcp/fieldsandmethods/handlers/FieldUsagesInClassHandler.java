@@ -2,16 +2,13 @@ package org.fjeanne.tools.rcp.fieldsandmethods.handlers;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -41,19 +38,23 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 
 		List<Object> selectedItems = getSelectedItems(event);
 
-		Stream<ITypeRoot> compilationUnits = selectedItems.stream()//
+		Collection<ITypeRoot> compilationUnits = selectedItems.stream()//
 				.filter(ITypeRoot.class::isInstance)//
-				.map(ITypeRoot.class::cast);
+				.map(ITypeRoot.class::cast)//
+				.collect(Collectors.toList());
+
+		if (compilationUnits.isEmpty()) {
+			showWarningWrongInput(event, compilationUnits);
+			return null;
+		}
 
 		String result = findFieldUsagesInMethods(compilationUnits);
-
-		showWarningIfEmpty(event, result);
-		showResultIfNotEmpty(event, result);
+		showResult(event, result);
 
 		return null;
 	}
 
-	private String findFieldUsagesInMethods(Stream<ITypeRoot> compilationUnits) {
+	private String findFieldUsagesInMethods(Collection<ITypeRoot> compilationUnits) {
 		StringBuilder result = new StringBuilder();
 
 		compilationUnits.forEach(compilationUnit -> {
@@ -120,19 +121,19 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 				.collect(Collectors.toCollection(TreeSet::new));
 	}
 
-	private void showWarningIfEmpty(ExecutionEvent event, String report) throws ExecutionException {
-		if (!report.isBlank())
-			return;
+	private void showWarningWrongInput(ExecutionEvent event, Collection<ITypeRoot> compilationUnits)
+			throws ExecutionException {
 
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		MessageDialog.openWarning(window.getShell(), "To be used only on Java files",
+		showWarning(event, "To be used only on Java files", //
 				"This command only works on java files and not on packages, projects, etc.\n"//
 						+ "Please select a Java file in the package explorer and run the command again.");
 	}
 
-	private void showResultIfNotEmpty(ExecutionEvent event, String report) throws ExecutionException {
-		if (report.isBlank())
+	private void showResult(ExecutionEvent event, String report) throws ExecutionException {
+		if (report.isBlank()) {
+			showWarning(event, "No fields found", "I couldn't find any fields in the selected class(es)");
 			return;
+		}
 
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
@@ -140,10 +141,14 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 		ErrorDialog.openError(window.getShell(), "Field usages in methods", "This is NOT an error", status);
 	}
 
+	private void showWarning(ExecutionEvent event, String title, String message) throws ExecutionException {
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		MessageDialog.openWarning(window.getShell(), title, message);
+	}
+
 	private static MultiStatus createMultiStatus(String details) {
 		Status status = new Status(IStatus.INFO, PLUGIN_ID, details);
 
-		String reason = "because I just created a CSV report of the field usages for you. Look under the 'Details'";
 		return new MultiStatus(PLUGIN_ID, IStatus.INFO, List.of(status).toArray(new Status[] {}), null, null);
 	}
 

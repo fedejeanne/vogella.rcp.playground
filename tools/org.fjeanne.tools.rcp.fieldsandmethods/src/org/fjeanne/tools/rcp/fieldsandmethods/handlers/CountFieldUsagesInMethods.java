@@ -6,14 +6,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class CountFieldUsagesInMethods extends ASTVisitor {
 
-	
 	private final Map<String, List<String>> _fieldsToMethods = new TreeMap<>();
 
 	private String _currentMethod;
@@ -48,6 +50,21 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 	}
 
 	@Override
+	public boolean visit(SingleVariableDeclaration parameter) {
+		if (!insideMethod())
+			return true;
+
+		// add type of parameter to the name of the method
+		_currentMethod += "_" + parameter.getType().toString();
+
+		return true;
+	}
+
+	private boolean insideMethod() {
+		return _currentMethod != null;
+	}
+
+	@Override
 	public void endVisit(MethodDeclaration node) {
 		log("Leaving method: " + _currentMethod);
 		_currentMethod = null;
@@ -67,7 +84,7 @@ public class CountFieldUsagesInMethods extends ASTVisitor {
 	}
 
 	private void log(String message) {
-		//TODO use a proper logging mechanism
+		// TODO use a proper logging mechanism
 		System.out.println(message);
 	}
 

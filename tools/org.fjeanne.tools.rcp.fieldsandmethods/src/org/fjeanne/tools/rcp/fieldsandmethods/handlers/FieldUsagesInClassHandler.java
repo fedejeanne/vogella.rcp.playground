@@ -144,7 +144,9 @@ public class FieldUsagesInClassHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		IStatus status = createMultiStatus(report);
-		ErrorDialog.openError(window.getShell(), "Field usages in methods", "This is NOT an error", status);
+		ErrorDialog.openError(window.getShell(), "Field usages in methods", "You can check the result under 'Details'."//
+				+ System.lineSeparator()//
+				+"HINT: you can copy the result and paste it in Excel, it's in CSV format.", status);
 	}
 
 	private void showWarning(ExecutionEvent event, String title, String message) throws ExecutionException {
